@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Blazor_WASM_gRPC_EFCore/Server/Data/Blog.sqlite3-shm
+/Blazor_WASM_gRPC_EFCore/Server/Data/Blog.sqlite3-wal

@@ -3,6 +3,8 @@ using Blazor_WASM_gRPC_EFCore.Shared.Protos;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System.Reflection.Metadata;
 
 namespace Blazor_WASM_gRPC_EFCore.Server.Services
 {
@@ -50,25 +52,17 @@ namespace Blazor_WASM_gRPC_EFCore.Server.Services
 
 		public override async Task<AddPostResult> AddPost(Post postRequest, ServerCallContext context)
 		{
-			AddPostResult addPostResult = new();
+			dbContext.ChangeTracker.DetectChanges();
 
-			// postRequest console output
-			Console.WriteLine("\n\n***** Post");
-			Console.WriteLine($"***** postRequest.Title: {postRequest.Title}");
-			Console.WriteLine($"***** postRequest.Content: {postRequest.Content}");
-			Console.WriteLine("\n***** Tags in Post");
-			foreach (Tag tag in postRequest.TagsInPostRepeated)
-			{
-				Console.WriteLine($"***** tag.TagId: {tag.TagId}");
-			}
+			dbContext.Posts!.Attach(postRequest);
+
+			Console.WriteLine("\n\n***** dbContext.ChangeTracker.DebugView.LongView");
+			Console.WriteLine(dbContext.ChangeTracker.DebugView.LongView);
 			Console.WriteLine("\n");
 
-			// no error checking, sample.
-			dbContext.Posts!.Add(postRequest);
 			await dbContext.SaveChangesAsync();
 
-			addPostResult.PostId = postRequest.PostId; // record id
-			return addPostResult;
+			return new() { PostId = postRequest.PostId };
 		}
 	}
 }

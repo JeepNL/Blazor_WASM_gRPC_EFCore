@@ -63,7 +63,12 @@ else
         Tag tag3 = new Tag { TagId = "Tag Three" };
         addPost.TagsInPostRepeated.AddRange(new[] { tag1, tag2, tag3 });
 
+        //UserPostResponse postResponse = new();
 
-        await client!.AddPostAsync(addPost);
+        AddPostResult addPostResult = await client!.AddPostAsync(addPost);
+        Console.WriteLine($"***** addPostResult.PostId: {addPostResult.PostId} ");
+
+        // refresh list
+        posts = (await client.GetPostsAsync(new Empty())).PostsRepeated.ToList();
     }
 }

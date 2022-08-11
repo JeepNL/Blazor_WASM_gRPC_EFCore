@@ -28,11 +28,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 //Seed data if DB is empty
-//using (var scope = app.Services.CreateScope())
-//{
-//	var services = scope.ServiceProvider;
-//	SeedData.Initialize(services);
-//}
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	SeedData.Initialize(services);
+}
 
 if (app.Environment.IsDevelopment())
 {

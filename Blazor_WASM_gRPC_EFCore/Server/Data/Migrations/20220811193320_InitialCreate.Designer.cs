@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blazor_WASM_gRPC_EFCore.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220811082002_InitialCreate")]
+    [Migration("20220811193320_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
