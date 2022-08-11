@@ -1,0 +1,69 @@
+﻿@page "/"
+@using Grpc.Net.Client
+@using Google.Protobuf.WellKnownTypes;
+@using Blazor_WASM_gRPC_EFCore.Shared.Protos
+@inject GrpcChannel Channel
+
+<PageTitle>Index</PageTitle>
+
+<h1>Blog Posts</h1>
+
+@if (posts == null)
+{
+    <p>Loading ...</p>
+}
+else
+{
+    foreach (var post in posts)
+    {
+        <div>(@post.PostId) - <b>@post.Title</b></div>
+        <div>@post.Content</div>
+        <div class="mb-3">
+            <small>-- <b>Tags: </b></small>
+            @foreach (Tag tag in post.TagsInPostRepeated)
+            {
+                <small>[@tag.TagId] </small>
+            }
+        </div>
+
+    }
+
+    <div>
+        <i>
+            Add a new preconfigured blog post (5), see source.
+            <br />And see server console output for error ...
+        </i>
+    </div>
+    <button class="my-2" @onclick="SubmitNewPost">Add Post</button>
+}
+
+@code {
+    private BlogProto.BlogProtoClient? client;
+    private List<Post>? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = new BlogProto.BlogProtoClient(Channel);
+        posts = (await client.GetPostsAsync(new Empty())).PostsRepeated.ToList();
+    }
+
+    private async Task SubmitNewPost()
+    {
+        // add post
+        Post addPost = new()
+            {
+                Title = "Post Title 5",
+                Content = "Post Content 5",
+                CreatedUtcTicks = DateTime.UtcNow.Ticks
+            };
+
+        // add 3 existing tags to post
+        Tag tag1 = new Tag { TagId = "Tag One" };
+        Tag tag2 = new Tag { TagId = "Tag Two" };
+        Tag tag3 = new Tag { TagId = "Tag Three" };
+        addPost.TagsInPostRepeated.AddRange(new[] { tag1, tag2, tag3 });
+
+
+        await client!.AddPostAsync(addPost);
+    }
+}
